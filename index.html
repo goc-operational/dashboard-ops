@@ -133,6 +133,9 @@ tr.sel td{background:var(--bluel);}
 .dl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
 .dr-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:.5px solid var(--border);font-size:12px;}
 .dr-row:last-child{border:none;}
+.dr-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:10px 12px;background:var(--surface2);border-radius:var(--r12);border:.5px solid var(--border);}
+.dr-fl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
+.dr-filters .fsel{min-width:130px;padding:6px 28px 6px 10px;font-size:12px;}
 
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--surface);font-size:13px;font-weight:500;padding:10px 20px;border-radius:99px;z-index:999;display:none;}
@@ -499,6 +502,7 @@ const MFULL={'2026-01':'Januari','2026-02':'Februari','2026-03':'Maret','2026-04
 
 /* ═══ STATE ═══ */
 let S={month:'all',area:'all',cat:null};
+let openCatDr=null;
 
 /* ═══ UTILS ═══ */
 const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
@@ -798,6 +802,7 @@ function setMonth(m){
   const el=document.getElementById('selMonth');
   if(el){el.value=m;el.classList.toggle('has-val',m!=='all');}
   renderAll();
+  if(openCatDr)refreshCatCustDr();
   showToast('Filter: '+(m==='all'?'Semua Bulan':MFULL[m]));
 }
 
@@ -806,7 +811,12 @@ function setArea(a){
   const el=document.getElementById('selArea');
   if(el){el.value=a;el.classList.toggle('has-val',a!=='all');}
   renderAll();
+  if(openCatDr)refreshCatCustDr();
   showToast('Area: '+(a==='all'?'Semua Area':a));
+}
+function setCatDrFilter(type,val){
+  if(type==='month')setMonth(val);
+  else if(type==='area')setArea(val);
 }
 
 function selectCat(n){
@@ -822,7 +832,9 @@ function resetAll(){
   const sm=document.getElementById('selMonth');if(sm){sm.value='all';sm.classList.remove('has-val');}
   const sa=document.getElementById('selArea');if(sa){sa.value='all';sa.classList.remove('has-val');}
   const sc=document.getElementById('selCat');if(sc){sc.value='';sc.classList.remove('has-val');}
-  renderAll();showToast('Semua filter direset');
+  renderAll();
+  if(openCatDr)refreshCatCustDr();
+  showToast('Semua filter direset');
 }
 
 /* ═══ DRAWERS ═══ */
@@ -833,7 +845,7 @@ function showDr(title,sub,body){
   document.getElementById('ov').classList.add('show');
   document.body.style.overflow='hidden';
 }
-function closeDr(e){if(e&&e.target!==document.getElementById('ov'))return;document.getElementById('ov').classList.remove('show');document.body.style.overflow='';}
+function closeDr(e){if(e&&e.target!==document.getElementById('ov'))return;document.getElementById('ov').classList.remove('show');document.body.style.overflow='';openCatDr=null;}
 
 function showDayDetail(idx,d){
   const lbl=d.labels[idx], val=d.values[idx];
@@ -865,11 +877,25 @@ function showSPDr(sp){
     <div class="dr-row"><span>% dari total margin tim</span><span style="font-weight:600">${totM>0?(sp.margin/totM*100).toFixed(1):0}%</span></div>
     <div class="dr-row"><span>Orders</span><span style="font-weight:600">${fN(sp.orders)}</span></div>`);
 }
-function showCatCustDr(catName){
+function buildCatCustDrFilters(){
+  const monthOpts=[
+    '<option value="all"'+(S.month==='all'?' selected':'')+'>Semua Bulan</option>',
+    ...MONTHS.map(m=>'<option value="'+m+'"'+(S.month===m?' selected':'')+'>'+MFULL[m]+'</option>')
+  ].join('');
+  const areaOpts=['<option value="all"'+(S.area==='all'?' selected':'')+'>Semua Area</option>',
+    '<option value="East"'+(S.area==='East'?' selected':'')+'>East</option>',
+    '<option value="West"'+(S.area==='West'?' selected':'')+'>West</option>'].join('');
+  return`<div class="dr-filters">
+    <span class="dr-fl">Bulan</span>
+    <select class="fsel${S.month!=='all'?' has-val':''}" id="drSelMonth" onchange="setCatDrFilter('month',this.value)">${monthOpts}</select>
+    <span class="dr-fl">Area</span>
+    <select class="fsel${S.area!=='all'?' has-val':''}" id="drSelArea" onchange="setCatDrFilter('area',this.value)">${areaOpts}</select>
+  </div>`;
+}
+function buildCatCustDrTable(catName){
   const custs=getCustByCat(catName);
-  const period=S.month==='all'?'Jan–Mei 2026':MFULL[S.month];
-  const areaLbl=S.area==='all'?'Semua Area':S.area;
-  const rows=custs.length?`<div class="tw" style="margin-top:4px"><table>
+  if(!custs.length)return'<p style="font-size:12px;color:var(--text3);margin-top:4px">Tidak ada data customer untuk bulan/area ini.</p>';
+  return`<div class="tw"><table>
     <thead><tr>
       <th>#</th><th>Customer</th>
       <th style="text-align:right">Sales</th>
@@ -887,9 +913,21 @@ function showCatCustDr(catName){
         <td class="tv" style="color:var(--teal)">${fM(c.margin)}</td>
         <td class="tv">${rate}%</td>
       </tr>`;
-    }).join('')}</tbody></table></div>`
-    :'<p style="font-size:12px;color:var(--text3);margin-top:8px">Tidak ada data customer untuk filter ini.</p>';
-  showDr(shortCat(catName),`Top 5 Customer · ${catName} · ${period} · ${areaLbl}`,rows);
+    }).join('')}</tbody></table></div>`;
+}
+function catCustDrSub(catName){
+  const period=S.month==='all'?'Jan–Mei 2026':MFULL[S.month];
+  const areaLbl=S.area==='all'?'Semua Area':S.area;
+  return`Top 5 Customer · ${period} · ${areaLbl}`;
+}
+function refreshCatCustDr(){
+  if(!openCatDr)return;
+  document.getElementById('drSub').textContent=catCustDrSub(openCatDr);
+  document.getElementById('drBody').innerHTML=buildCatCustDrFilters()+buildCatCustDrTable(openCatDr);
+}
+function showCatCustDr(catName){
+  openCatDr=catName;
+  showDr(shortCat(catName),catCustDrSub(catName),buildCatCustDrFilters()+buildCatCustDrTable(catName));
 }
 function showCustDr(c){
   const mRate=c.sales>0?(c.margin/c.sales*100).toFixed(2):0;
