@@ -368,7 +368,7 @@ tr.sel td{background:var(--bluel);}
   </div>
   <div class="card">
     <div class="ct">Avg IF Days per Kategori</div>
-    <div class="cs">Klik bar untuk top 5 customer · Hijau ≤10 · Kuning ≤30 · Merah &gt;30</div>
+    <div class="cs">Klik bar untuk top 5 customer · Hijau &lt;5 · Kuning 5–12 · Merah &gt;12</div>
     <div style="position:relative;width:100%;height:280px;"><canvas id="chartIF" role="img" aria-label="IF days">IF days.</canvas></div>
   </div>
 </div>
@@ -513,6 +513,7 @@ const SC=['#185FA5','#0F6E56','#BA7517','#993C1D','#534AB7','#3B6D11','#A32D2D',
 function fM(v){if(v>=1e9)return'Rp '+(v/1e9).toFixed(2)+'M';if(v>=1e6)return'Rp '+(v/1e6).toFixed(0)+'Jt';return'Rp '+(v/1e3).toFixed(0)+'K';}
 function fB(v){if(v>=1e9)return(v/1e9).toFixed(2)+'M';if(v>=1e6)return(v/1e6).toFixed(0)+'Jt';return(v/1e3).toFixed(0)+'K';}
 function fN(v){return Number(v).toLocaleString('id-ID');}
+function ifColor(v){return v<5?'#1D9E75':v<=12?'#EF9F27':'#E24B4A';}
 
 function getCats(){const k=S.month+'_'+S.area;return CAT[k]||(S.month==='all'?getMergedCats():CAT[MONTHS[0]+'_'+S.area]||[]);}
 function getMergedCats(){
@@ -643,7 +644,7 @@ function buildIF(){
   const cats=getCats();
   mkChart('chartIF',{
     type:'bar',
-    data:{labels:cats.map(c=>{const s=shortCat(c.name);return s.length>18?s.slice(0,17)+'…':s;}),datasets:[{label:'Avg IF Days',data:cats.map(c=>c.avgIF),backgroundColor:cats.map(c=>c.avgIF>30?'#E24B4A':c.avgIF>10?'#EF9F27':'#1D9E75'),borderRadius:4}]},
+    data:{labels:cats.map(c=>{const s=shortCat(c.name);return s.length>18?s.slice(0,17)+'…':s;}),datasets:[{label:'Avg IF Days',data:cats.map(c=>c.avgIF),backgroundColor:cats.map(c=>ifColor(c.avgIF)),borderRadius:4}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
       onClick(_,items){if(!items.length)return;const c=cats[items[0].index];if(c)showCatCustDr(c.name);},
       onHover(_,items){document.getElementById('chartIF').style.cursor=items.length?'pointer':'default';},
