@@ -1066,7 +1066,7 @@ function showFcCatDr(c){
   const growth=((c.forecast_sales/c.actual_sales-1)*100).toFixed(1);
   const addSales=c.forecast_sales-c.actual_sales;
   const addMargin=c.forecast_margin-c.actual_margin;
-  showDr(c.name+' — Forecast Mei 2026','Proyeksi berdasarkan rata-rata harian 1–18 Mei',
+  showDr(c.name+' — Forecast Mei 2026','Proyeksi berdasarkan rata-rata harian 1–26 Mei',
     `<div class="dg2">
       <div class="ds"><div class="ds-l">Aktual Sales</div><div class="ds-v" style="color:var(--blue)">${fM(c.actual_sales)}</div><div class="ds-s">s/d 18 Mei (12 hk)</div></div>
       <div class="ds"><div class="ds-l">Forecast Sales</div><div class="ds-v" style="color:var(--bluem)">${fM(c.forecast_sales)}</div><div class="ds-s">proyeksi akhir Mei</div></div>
