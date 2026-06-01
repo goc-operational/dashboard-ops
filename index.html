@@ -394,13 +394,13 @@ tr.sel td{background:var(--bluel);}
   <div class="fc-banner-hdr">
     <div>
       <div class="fc-banner-title">📊 Proyeksi Penjualan Mei 2026</div>
-      <div class="fc-banner-sub" id="fcBannerSub">Berdasarkan rata-rata harian 1–18 Mei · Sisa 9 hari kerja</div>
+      <div class="fc-banner-sub" id="fcBannerSub">Berdasarkan rata-rata harian 1–26 Mei · Sisa 9 hari kerja</div>
     </div>
     <span class="fc-badge" id="fcBadgePct">57.1% bulan berjalan</span>
   </div>
   <div class="fc-metrics">
     <div class="fc-mc">
-      <div class="fc-mc-lbl">Aktual s/d 18 Mei</div>
+      <div class="fc-mc-lbl">Aktual s/d 26 Mei</div>
       <div class="fc-mc-val" id="fcActSales">—</div>
       <div class="fc-mc-sub">Sales terealisasi</div>
     </div>
@@ -446,7 +446,7 @@ tr.sel td{background:var(--bluel);}
 <!-- CATEGORY FORECAST -->
 <div class="fc-card" style="margin-bottom:14px;">
   <div class="fc-card-title">Forecast per Kategori</div>
-  <div class="fc-card-sub">Aktual s/d 18 Mei vs Proyeksi akhir Mei 2026 — klik untuk detail</div>
+  <div class="fc-card-sub">Aktual s/d 26 Mei vs Proyeksi akhir Mei 2026 — klik untuk detail</div>
   <div class="fc-legend">
     <div class="fc-leg-i"><span class="fc-leg-d" style="background:var(--bluem)"></span>Aktual</div>
     <div class="fc-leg-i"><span class="fc-leg-d" style="background:rgba(55,138,221,.3)"></span>Proyeksi tambahan</div>
@@ -1068,10 +1068,10 @@ function showFcCatDr(c){
   const addMargin=c.forecast_margin-c.actual_margin;
   showDr(c.name+' — Forecast Mei 2026','Proyeksi berdasarkan rata-rata harian 1–26 Mei',
     `<div class="dg2">
-      <div class="ds"><div class="ds-l">Aktual Sales</div><div class="ds-v" style="color:var(--blue)">${fM(c.actual_sales)}</div><div class="ds-s">s/d 18 Mei (12 hk)</div></div>
+      <div class="ds"><div class="ds-l">Aktual Sales</div><div class="ds-v" style="color:var(--blue)">${fM(c.actual_sales)}</div><div class="ds-s">s/d 26 Mei (12 hk)</div></div>
       <div class="ds"><div class="ds-l">Forecast Sales</div><div class="ds-v" style="color:var(--bluem)">${fM(c.forecast_sales)}</div><div class="ds-s">proyeksi akhir Mei</div></div>
     </div><div class="dg2">
-      <div class="ds"><div class="ds-l">Aktual Margin</div><div class="ds-v" style="color:var(--teal)">${fM(c.actual_margin)}</div><div class="ds-s">s/d 18 Mei</div></div>
+      <div class="ds"><div class="ds-l">Aktual Margin</div><div class="ds-v" style="color:var(--teal)">${fM(c.actual_margin)}</div><div class="ds-s">s/d 26 Mei</div></div>
       <div class="ds"><div class="ds-l">Forecast Margin</div><div class="ds-v" style="color:var(--tealm)">${fM(c.forecast_margin)}</div><div class="ds-s">proyeksi akhir Mei</div></div>
     </div><div class="dd"></div>
     <div class="dl">Rincian</div>
